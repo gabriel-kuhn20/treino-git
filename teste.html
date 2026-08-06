@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Validador de CPF</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 100%;
+            max-width: 400px;
+        }
+        h2 {
+            color: #333333;
+            margin-bottom: 20px;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #cccccc;
+            border-radius: 4px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #007bff;
+            color: #ffffff;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        .success {
+            color: #28a745;
+        }
+        .error {
+            color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Validar CPF</h2>
+    <input type="text" id="cpfInput" placeholder="Digite apenas os números do CPF" maxlength="11">
+    <button onclick="processarValidacao()">Validar</button>
+    <div id="resultMessage" class="result"></div>
+</div>
+
+<script>
+    function validarCPF(cpf) {
+        cpf = cpf.replace(/[^\d]+/g, '');
+        
+        if (cpf.length !== 11 || /^(\d)\1{10}$/.test(cpf)) {
+            return false;
+        }
+
+        let soma = 0;
+        let resto;
+
+        for (let i = 1; i <= 9; i++) {
+            soma = soma + parseInt(cpf.substring(i - 1, i)) * (11 - i);
+        }
+        
+        resto = (soma * 10) % 11;
+        if ((resto === 10) || (resto === 11)) {
+            resto = 0;
+        }
+        if (resto !== parseInt(cpf.substring(9, 10))) {
+            return false;
+        }
+
+        soma = 0;
+        for (let i = 1; i <= 10; i++) {
+            soma = soma + parseInt(cpf.substring(i - 1, i)) * (12 - i);
+        }
+        
+        resto = (soma * 10) % 11;
+        if ((resto === 10) || (resto === 11)) {
+            resto = 0;
+        }
+        if (resto !== parseInt(cpf.substring(10, 11))) {
+            return false;
+        }
+
+        return true;
+    }
+
+    function processarValidacao() {
+        const input = document.getElementById('cpfInput').value;
+        const messageContainer = document.getElementById('resultMessage');
+        
+        if (!input) {
+            messageContainer.textContent = "Por favor, informe um CPF.";
+            messageContainer.className = "result error";
+            return;
+        }
+
+        const ehValido = validarCPF(input);
+
+        if (ehValido) {
+            messageContainer.textContent = "O CPF informado é VÁLIDO.";
+            messageContainer.className = "result success";
+        } else {
+            messageContainer.textContent = "O CPF informado é INVÁLIDO.";
+            messageContainer.className = "result error";
+        }
+    }
+</script>
+
+</body>
+</html>
