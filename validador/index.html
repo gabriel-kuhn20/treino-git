@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Validador de CPF</title>
+<style>
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f2f2f2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    margin: 0;
+  }
+
+  .card {
+    background: #fff;
+    padding: 32px 28px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+    width: 100%;
+    max-width: 360px;
+    text-align: center;
+  }
+
+  h1 {
+    font-size: 20px;
+    margin-bottom: 20px;
+    color: #333;
+  }
+
+  input[type="text"] {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 12px;
+  }
+
+  button {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 16px;
+    background: #2563eb;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  button:hover {
+    background: #1d4ed8;
+  }
+
+  #resultado {
+    margin-top: 18px;
+    font-weight: bold;
+    font-size: 15px;
+    min-height: 20px;
+  }
+
+  #resultado.valido {
+    color: #16a34a;
+  }
+
+  #resultado.invalido {
+    color: #dc2626;
+  }
+</style>
+</head>
+<body>
+
+  <div class="card">
+    <h1>Validador de CPF</h1>
+    <input type="text" id="cpfInput" placeholder="Digite o CPF (com ou sem pontuação)" maxlength="14">
+    <button id="validarBtn">Validar</button>
+    <div id="resultado"></div>
+  </div>
+
+  <script>
+    document.getElementById('cpfInput').addEventListener('input', function (e) {
+      let v = e.target.value.replace(/\D/g, '').slice(0, 11);
+      v = v.replace(/(\d{3})(\d)/, '$1.$2');
+      v = v.replace(/(\d{3})(\d)/, '$1.$2');
+      v = v.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+      e.target.value = v;
+    });
+
+    document.getElementById('validarBtn').addEventListener('click', validarCPF);
+    document.getElementById('cpfInput').addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') validarCPF();
+    });
+
+    function validarCPF() {
+      const resultadoEl = document.getElementById('resultado');
+      const input = document.getElementById('cpfInput').value;
+      const cpf = input.replace(/\D/g, '');
+
+      resultadoEl.classList.remove('valido', 'invalido');
+
+      if (cpf.length !== 11) {
+        resultadoEl.textContent = 'CPF inválido: deve conter 11 dígitos.';
+        resultadoEl.classList.add('invalido');
+        return;
+      }
+
+      // Rejeita CPFs com todos os dígitos iguais (ex: 111.111.111-11)
+      if (/^(\d)\1{10}$/.test(cpf)) {
+        resultadoEl.textContent = 'CPF inválido.';
+        resultadoEl.classList.add('invalido');
+        return;
+      }
+
+      const digitos = cpf.split('').map(Number);
+
+      function calcularDigito(base) {
+        let soma = 0;
+        let peso = base.length + 1;
+        for (let i = 0; i < base.length; i++) {
+          soma += base[i] * peso;
+          peso--;
+        }
+        const resto = (soma * 10) % 11;
+        return resto === 10 ? 0 : resto;
+      }
+
+      const primeiros9 = digitos.slice(0, 9);
+      const digito1 = calcularDigito(primeiros9);
+
+      const primeiros10 = digitos.slice(0, 9).concat(digito1);
+      const digito2 = calcularDigito(primeiros10);
+
+      const cpfValido = digito1 === digitos[9] && digito2 === digitos[10];
+
+      if (cpfValido) {
+        resultadoEl.textContent = 'CPF válido!';
+        resultadoEl.classList.add('valido');
+      } else {
+        resultadoEl.textContent = 'CPF inválido.';
+        resultadoEl.classList.add('invalido');
+      }
+    }
+  </script>
+
+</body>
+</html>
