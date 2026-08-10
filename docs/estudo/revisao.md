@@ -1,4 +1,24 @@
-# Revisão — codigo/gabriel (comparado com main)
+# Relatório da revisão — codigo/gabriel
+
+## Ferramenta e modelo
+
+Claude Code no VS Code, com a skill gerada pelo skill-creator da Anthropic.
+Modelo: Claude Opus 5, esforço alto.
+
+## Uma pergunta que a ferramenta me fez e que eu não tinha pensado
+
+Ela perguntou se a skill precisava servir para qualquer repositório ou se
+podia ser refinada para o caso da turma. Eu tinha assumido que skill era
+sempre algo genérico e não tinha considerado o custo disso.
+
+## Um achado
+
+O validador aceita `111.111.111-11` como CPF válido, e o mesmo vale para
+qualquer sequência de 11 dígitos repetidos. Eu tinha testado isso no
+navegador antes de rodar a skill, e ela depois confirmou o mesmo problema
+executando a função extraída contra uma bateria de casos.
+
+
 
 Arquivos no diff: `validador/index.html` (arquivo novo, 104 linhas)
 
